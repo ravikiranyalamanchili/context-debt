@@ -1,5 +1,7 @@
 # Context Debt
 
+> Early alpha — expect rough edges. Stars and issues welcome.
+
 [![npm version](https://img.shields.io/npm/v/@context-debt/core)](https://www.npmjs.com/package/@context-debt/core)
 [![license](https://img.shields.io/npm/l/@context-debt/core)](./LICENSE)
 [![node](https://img.shields.io/node/v/@context-debt/core)](package.json)
