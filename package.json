@@ -1,0 +1,44 @@
+{
+  "name": "@context-debt/core",
+  "version": "0.1.0",
+  "description": "AST-native drift detector for AI coding tools. Catches stale CLAUDE.md, .cursorrules, and Copilot instructions before your AI agents hallucinate.",
+  "type": "commonjs",
+  "main": "index.js",
+  "bin": {
+    "context-debt": "cli.js"
+  },
+  "scripts": {
+    "audit": "node cli.js audit .",
+    "audit:path": "node cli.js audit"
+  },
+  "keywords": [
+    "ai",
+    "context",
+    "drift",
+    "claude",
+    "cursor",
+    "copilot",
+    "typescript",
+    "ast",
+    "developer-tools",
+    "llm",
+    "tree-sitter"
+  ],
+  "author": "ravikiranyalamanchili",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ravikiranyalamanchili/context-debt.git"
+  },
+  "homepage": "https://github.com/ravikiranyalamanchili/context-debt",
+  "bugs": {
+    "url": "https://github.com/ravikiranyalamanchili/context-debt/issues"
+  },
+  "dependencies": {
+    "tree-sitter": "^0.21.0",
+    "tree-sitter-typescript": "^0.21.0"
+  }
+}

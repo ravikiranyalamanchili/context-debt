@@ -1,0 +1,5 @@
+CLAUDE.md
+.claude/
+.gitignore
+*.log
+.DS_Store
