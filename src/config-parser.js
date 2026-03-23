@@ -71,6 +71,8 @@ const NOISE_WORDS = new Set([
   // Common framework / runtime names (not local symbols)
   'API', 'HTTP', 'HTML', 'CSS', 'DOM',
   'Node', 'React', 'Next', 'Vue', 'Angular', 'Express', 'Fastify',
+  // Package managers and CLI tools
+  'npm', 'pnpm', 'yarn', 'bun', 'npx', 'git', 'bash', 'zsh',
 ]);
 
 // ─── Main parser ──────────────────────────────────────────────────────────────
@@ -220,9 +222,14 @@ function tryExtractSignature(name, textAfter) {
 function isValidSymbolName(name) {
   if (!name || name.length < 2 || name.length > 80) return false;
   if (NOISE_WORDS.has(name) || NOISE_WORDS.has(name[0].toUpperCase() + name.slice(1))) return false;
-  if (/^\d/.test(name)) return false;      // Starts with a digit
-  if (/^[A-Z]{3,}$/.test(name)) return false; // All caps acronym (HTTP, API, CSS)
-  if (name.split('.').length > 3) return false; // Too many dots — not a symbol
+  if (/^\d/.test(name)) return false;           // Starts with a digit
+  if (/^[A-Z]{3,}$/.test(name)) return false;  // All-caps acronym (HTTP, API, CSS)
+  if (name.endsWith('.')) return false;         // Trailing dot — not a valid symbol
+  if (/\.\w+$/.test(name) && /\.(md|js|ts|json|yaml|yml|txt|sh)$/i.test(name)) return false; // File names
+  if (name.split('.').length > 3) return false; // Too many dots
+  // Dotted names must start with PascalCase (e.g. UserService.create)
+  // Filter out instance method chains like prisma.user.findUnique, db.query
+  if (name.includes('.') && /^[a-z]/.test(name)) return false;
   return true;
 }
 
