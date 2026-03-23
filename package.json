@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "description": "AST-native drift detector for AI coding tools. Catches stale CLAUDE.md, .cursorrules, and Copilot instructions before your AI agents hallucinate.",
   "type": "commonjs",
-  "main": "index.js",
+  "main": "src/index.js",
   "bin": {
-    "context-debt": "cli.js"
+    "context-debt": "src/cli.js"
   },
   "scripts": {
-    "audit": "node cli.js audit .",
-    "audit:path": "node cli.js audit"
+    "audit": "node src/cli.js audit .",
+    "audit:path": "node src/cli.js audit"
   },
   "keywords": [
     "ai",

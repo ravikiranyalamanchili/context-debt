@@ -2,44 +2,14 @@
 
 > Early alpha — expect rough edges. Stars and issues welcome.
 
-[![npm version](https://img.shields.io/npm/v/@context-debt/core)](https://www.npmjs.com/package/@context-debt/core)
-[![license](https://img.shields.io/npm/l/@context-debt/core)](./LICENSE)
-[![node](https://img.shields.io/node/v/@context-debt/core)](package.json)
+[![license](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
+[![node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](package.json)
 
 **Your AI agents are working from a lie.** Every time you rename a function, refactor a class, or add a new module — your `CLAUDE.md`, `.cursorrules`, or Copilot instructions fall further out of sync with reality. The AI keeps confidently using the old names. This is **context drift**, and it gets worse every day you don't fix it.
 
 Context Debt parses your TypeScript AST and compares it against your AI config files. It produces a **drift score** (0–100%) and a precise list of what's stale, what's changed signature, and what the AI is missing entirely — so you can fix it before it costs you.
 
-```
-Context Debt — drift audit
-────────────────────────────────────────────────────────
-  Repo:  /your/repo
-  Time:  3/22/2026, 3:22 PM
-────────────────────────────────────────────────────────
-
-Step 1/3  Parsing AI config files...
-  ✓ Found CLAUDE.md
-  14 symbol references extracted
-
-Step 2/3  Scanning TypeScript files...
-  Full scan: 42 TypeScript file(s) found
-  312 symbols extracted
-
-Step 3/3  Scoring drift...
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  Drift score   34%  [DEGRADED]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  ✗ deleteUser         [high confidence]
-    "deleteUser" not found anywhere in the codebase
-
-  ~ createUser         [high confidence]
-    Signature changed: was "(username, email)", now "(opts: CreateUserInput): Promise<User>"
-
-  + validateSession
-    "validateSession" exists in auth.ts but is absent from your AI config
-```
+![Context Debt audit on tRPC](./assets/demo.png)
 
 ## Installation
 
