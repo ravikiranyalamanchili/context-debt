@@ -66,10 +66,24 @@ function parseFlags(args) {
   const flags = { _path: null, output: null, maxDrift: null };
 
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === '--output' && args[i + 1]) {
+    if (args[i] === '--output') {
+      if (!args[i + 1] || args[i + 1].startsWith('--')) {
+        console.error(red(`\nError: --output requires a file path\n`));
+        console.error(dim(`  Example: context-debt audit . --output .context-debt/report.json\n`));
+        process.exit(1);
+      }
       flags.output = args[++i];
-    } else if (args[i] === '--max-drift' && args[i + 1]) {
+    } else if (args[i] === '--max-drift') {
+      if (!args[i + 1] || args[i + 1].startsWith('--')) {
+        console.error(red(`\nError: --max-drift requires a number between 0 and 100\n`));
+        console.error(dim(`  Example: context-debt audit . --max-drift 25\n`));
+        process.exit(1);
+      }
       flags.maxDrift = parseInt(args[++i], 10);
+      if (isNaN(flags.maxDrift) || flags.maxDrift < 0 || flags.maxDrift > 100) {
+        console.error(red(`\nError: --max-drift must be a number between 0 and 100\n`));
+        process.exit(1);
+      }
     } else if (!args[i].startsWith('--')) {
       flags._path = args[i];
     }
