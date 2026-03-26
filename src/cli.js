@@ -267,8 +267,7 @@ function printReport(report, repoRoot) {
   if (driftScore === 0) {
     console.log(`\n  ${green(B('All good.'))} Your AI context is fresh.\n`);
   } else {
-    console.log(`\n  ${B('Next step:')} run ${cyan('context-debt fix')} to auto-update your AI config`);
-    console.log(`  ${dim('or review the findings above and update manually.')}\n`);
+    console.log(`\n  ${B('Next step:')} review the findings above and update your AI config manually.\n`);
   }
 }
 
