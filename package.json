@@ -1,6 +1,6 @@
 {
   "name": "@context-debt/core",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "AST-native drift detector for AI coding tools. Catches stale CLAUDE.md, .cursorrules, and Copilot instructions before your AI agents hallucinate.",
   "type": "commonjs",
   "main": "src/index.js",
