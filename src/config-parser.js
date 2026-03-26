@@ -72,7 +72,17 @@ const NOISE_WORDS = new Set([
   'API', 'HTTP', 'HTML', 'CSS', 'DOM',
   'Node', 'React', 'Next', 'Vue', 'Angular', 'Express', 'Fastify',
   // Package managers and CLI tools
-  'npm', 'pnpm', 'yarn', 'bun', 'npx', 'git', 'bash', 'zsh',
+  'pnpm', 'yarn', 'npm', 'npx', 'bun', 'node', 'deno',
+  // File and directory names
+  'src', 'dist', 'build', 'out', 'lib', 'bin', 'scripts',
+  // Config file names (appear in prose constantly)
+  'CLAUDE', 'AGENTS', 'GEMINI', 'README', 'LICENSE', 'CHANGELOG',
+  // Common prose words that slip through
+  'server', 'client', 'providers', 'guards', 'components',
+  'services', 'modules', 'controllers', 'middleware', 'utils',
+  'helpers', 'hooks', 'types', 'interfaces', 'models', 'schemas',
+  'existing', 'following', 'above', 'below', 'current', 'previous',
+  'production', 'development', 'staging', 'testing',
 ]);
 
 // ─── Main parser ──────────────────────────────────────────────────────────────
@@ -118,15 +128,20 @@ function parseConfigs(repoRoot) {
  */
 function parseConfigFile(filePath) {
   const content = fs.readFileSync(filePath, 'utf8');
+  const lineCount = content.split('\n').length;
   const symbols = new Map(); // name → ClaimedSymbol
 
-  // Strip markdown code blocks first — we parse those differently
   const { prose, codeBlocks } = separateCodeBlocks(content);
 
-  // Extract from prose (lower confidence — it's natural language)
-  extractFromProse(prose, symbols, 'prose');
+  // Large config files (>100 lines) are overwhelmingly narrative text.
+  // Only trust backtick spans and code blocks — prose extraction generates
+  // too many false positives in long architectural documents.
+  if (lineCount > 100) {
+    extractWithPattern(prose, BACKTICK_SYMBOL_PATTERN, symbols, 'prose', 'high');
+  } else {
+    extractFromProse(prose, symbols, 'prose');
+  }
 
-  // Extract from code blocks (higher confidence — it's actual code)
   for (const block of codeBlocks) {
     extractFromCode(block, symbols, 'code');
   }
@@ -220,16 +235,19 @@ function tryExtractSignature(name, textAfter) {
 // ─── Symbol validation ────────────────────────────────────────────────────────
 
 function isValidSymbolName(name) {
-  if (!name || name.length < 2 || name.length > 80) return false;
-  if (NOISE_WORDS.has(name) || NOISE_WORDS.has(name[0].toUpperCase() + name.slice(1))) return false;
+  if (!name || name.length < 3 || name.length > 80) return false;
+  if (NOISE_WORDS.has(name)) return false;
   if (/^\d/.test(name)) return false;           // Starts with a digit
-  if (/^[A-Z]{3,}$/.test(name)) return false;  // All-caps acronym (HTTP, API, CSS)
+  if (/^[A-Z]{2,}$/.test(name)) return false;  // All-caps acronym (HTTP, API, CSS)
   if (name.endsWith('.')) return false;         // Trailing dot — not a valid symbol
-  if (/\.\w+$/.test(name) && /\.(md|js|ts|json|yaml|yml|txt|sh)$/i.test(name)) return false; // File names
+  if (/\.(md|js|ts|json|yaml|yml|txt|sh)$/i.test(name)) return false; // File names
   if (name.split('.').length > 3) return false; // Too many dots
   // Dotted names must start with PascalCase (e.g. UserService.create)
   // Filter out instance method chains like prisma.user.findUnique, db.query
   if (name.includes('.') && /^[a-z]/.test(name)) return false;
+  // Reject plain lowercase words — "following", "existing", "server" etc.
+  // Real TypeScript symbols are camelCase, PascalCase, or contain dots/underscores
+  if (/^[a-z][a-z]+$/.test(name)) return false;
   return true;
 }
 
